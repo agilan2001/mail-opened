@@ -3,7 +3,7 @@
 
 <head>
 
-    
+
     <link type="text/css" rel="stylesheet" href="https://www.gstatic.com/firebasejs/ui/4.6.1/firebase-ui-auth.css" />
 </head>
 
@@ -52,7 +52,7 @@
                 // User successfully signed in.
                 // Return type determines whether we continue the redirect automatically
                 // or whether we leave that to developer to handle.
-                return true;
+                return false;
             },
             uiShown: function () {
                 // The widget is rendered.
@@ -62,12 +62,21 @@
         },
         // Will use popup for IDP Providers sign-in flow instead of the default, redirect.
         signInFlow: 'popup',
-        signInSuccessUrl: '<url-to-redirect-to-on-success>',
         signInOptions: [
             // Leave the lines as is for the providers you want to offer your users.
             {
                 provider: firebase.auth.EmailAuthProvider.PROVIDER_ID,
-                signInMethod: firebase.auth.EmailAuthProvider.EMAIL_LINK_SIGN_IN_METHOD
+                signInMethod: firebase.auth.EmailAuthProvider.EMAIL_LINK_SIGN_IN_METHOD,
+                emailLinkSignIn: function () {
+                    return {
+                        // Additional state showPromo=1234 can be retrieved from URL on
+                        // sign-in completion in signInSuccess callback by checking
+                        // window.location.href.
+                        url: 'https://www.example.com/completeSignIn?showPromo=1234',
+                        // Always true for email link sign-in.
+                        handleCodeInApp: true,
+                    };
+                }
             }
         ],
         // Terms of service url.
