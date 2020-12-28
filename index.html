@@ -1,19 +1,80 @@
 <!DOCTYPE html>
 <html>
 
+<head>
+    <script src="https://www.gstatic.com/firebasejs/ui/4.6.1/firebase-ui-auth.js"></script>
+    <link type="text/css" rel="stylesheet" href="https://www.gstatic.com/firebasejs/ui/4.6.1/firebase-ui-auth.css" />
+</head>
+
 <body>
     <img src="https://xpl6mndw31.execute-api.us-east-2.amazonaws.com/default/gmail-read-receipt">
     <img src="lambda/empty_image.png">
+
+    <h1>Welcome to My Awesome App</h1>
+    <div id="firebaseui-auth-container"></div>
+    <div id="loader">Loading...</div>
 </body>
 
 
 
 <script>
+
+    var ui = new firebaseui.auth.AuthUI(firebase.auth());
+
+    var uiConfig = {
+        callbacks: {
+            signInSuccessWithAuthResult: function (authResult, redirectUrl) {
+                // User successfully signed in.
+                // Return type determines whether we continue the redirect automatically
+                // or whether we leave that to developer to handle.
+                return true;
+            },
+            uiShown: function () {
+                // The widget is rendered.
+                // Hide the loader.
+                document.getElementById('loader').style.display = 'none';
+            }
+        },
+        // Will use popup for IDP Providers sign-in flow instead of the default, redirect.
+        signInFlow: 'popup',
+        signInSuccessUrl: '<url-to-redirect-to-on-success>',
+        signInOptions: [
+            // Leave the lines as is for the providers you want to offer your users.
+            {
+                provider: firebase.auth.EmailAuthProvider.PROVIDER_ID,
+                signInMethod: firebase.auth.EmailAuthProvider.EMAIL_LINK_SIGN_IN_METHOD
+            }
+        ],
+        // Terms of service url.
+        tosUrl: '<your-tos-url>',
+        // Privacy policy url.
+        privacyPolicyUrl: '<your-privacy-policy-url>'
+    };
+
+    ui.start('#firebaseui-auth-container', uiConfig);
+
+
+    // ui.start('#firebaseui-auth-container', {
+    //     signInOptions: [
+    //         {
+    //             provider: firebase.auth.EmailAuthProvider.PROVIDER_ID,
+    //             signInMethod: firebase.auth.EmailAuthProvider.EMAIL_LINK_SIGN_IN_METHOD
+    //         }
+    //     ],
+    // });
+
+
+    // if (ui.isPendingRedirect()) {
+    //     ui.start('#firebaseui-auth-container', uiConfig);
+    // }
+
+    /*
+    event['identity']['sourceIp']
     navigator.clipboard.write([
         new ClipboardItem({
             ['text/html']: new Blob(['<img src="https://xpl6mndw31.execute-api.us-east-2.amazonaws.com/default/gmail-read-receipt">'], { type: 'text/html' })
         })
-    ])
+    ])*/
 
 </script>
 
