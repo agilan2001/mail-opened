@@ -20,10 +20,17 @@ jobs:
           npm run build --if-present
         env:
           CI: true
-      - name: zip
-        uses: montudor/action-zip@v0.1.0
-        with:
-          args: zip -qq -r bundle.zip lambda/*
+
+      - name: Install zip
+        uses: montudor/action-zip@v0.1.1
+
+      - name: Zip output
+        run: zip -qq -r bundle.zip ./
+        working-directory: ./lambda
+      # - name: zip
+      #   uses: montudor/action-zip@v0.1.0
+      #   with:
+      #     args: zip -qq -r ./bundle.zip ./
       - name: default deploy
         uses: appleboy/lambda-action@master
         with:
