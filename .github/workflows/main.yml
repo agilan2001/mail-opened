@@ -31,3 +31,4 @@ jobs:
           aws_region: eu-east-2
           function_name: my-function
           zip_file: bundle.zip
+          timeout: 10
