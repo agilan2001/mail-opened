@@ -75,6 +75,7 @@
     };
 
     ui.start('#firebaseui-auth-container', uiConfig);
+    firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL)
 
 
     // ui.start('#firebaseui-auth-container', {
