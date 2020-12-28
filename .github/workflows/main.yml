@@ -23,7 +23,7 @@ jobs:
       - name: zip
         uses: montudor/action-zip@v0.1.0
         with:
-          args: zip -qq -r ./bundle.zip ./
+          args: zip -qq -r ./bundle.zip ./lambda/
       - name: default deploy
         uses: appleboy/lambda-action@master
         with:
