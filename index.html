@@ -1,6 +1,20 @@
 <!DOCTYPE html>
 <html>
-    <body>
-        <img src = "http://localhost:8080/">
-    </body>
+
+<body>
+    <img src="https://xpl6mndw31.execute-api.us-east-2.amazonaws.com/default/gmail-read-receipt">
+    <img src="lambda/empty_image.png">
+</body>
+
+
+
+<script>
+    navigator.clipboard.write([
+        new ClipboardItem({
+            ['text/html']: new Blob(['<img src="https://xpl6mndw31.execute-api.us-east-2.amazonaws.com/default/gmail-read-receipt">'], { type: 'text/html' })
+        })
+    ])
+
+</script>
+
 </html>
