@@ -20,14 +20,20 @@ admin.initializeApp({
     databaseURL: "https://mail-opened-default-rtdb.firebaseio.com"
 });
 
+var db = admin.database();
 
 exports.handler = async (event) => {
-    const response = {
-        
-        statusCode: 200,
-        body: JSON.stringify(await admin.database().ref("users").once("value")),
-        
-    };
-    return response;
+
+    var body = JSON.parse(event.body);
+
+    if(body.query=="create"){
+        await db.ref('users/' + body.uid + "/email").set({
+            mail:body.mail
+        });
+        return {
+            statusCode: 200,
+            body: "DONE",   
+        }
+    }
 };
 

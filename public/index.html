@@ -55,8 +55,8 @@
                             // User successfully signed in.
                             // Return type determines whether we continue the redirect automatically
                             // or whether we leave that to developer to handle.
-                            if (authResult.additionalUserInfo.isNewUser()){
-                                createNewUser();
+                            if (authResult.additionalUserInfo.isNewUser()) {
+                                createNewUser(authResult.user.uid, authResult.user.email );
                             };
                             return false;
                         },
@@ -87,7 +87,18 @@
         }
     })
 
-    
+    function createNewUser(uid, mail) {
+        fetch("https://iflyrlquq5.execute-api.us-east-2.amazonaws.com/default/mail-opened-query", {
+            method: 'POST',
+            body: JSON.stringify({
+                query: 'create',
+                uid: uid,
+                mail: mail
+            })
+        })
+    }
+
+
 
 
 
