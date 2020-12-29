@@ -22,7 +22,6 @@
     <div class="modal fade" id="myModal" tabindex="-1">
         <div class="modal-dialog modal-sm modal-dialog-centered">
             <div class="modal-content">
-
                 <div class='modal-body' id="firebaseui-auth-container"></div>
             </div>
         </div>
@@ -39,8 +38,31 @@
     </ul>
     <div class="tab-content container" id="pills-tabContent">
         <div class="tab-pane fade show active" id="pills-start">
-            <button onclick="create_inv_img()">INVISIBLE TRACKER</button>
-            <button onclick="activate_lnk()">ACTIVATE TRACKER</button>
+            <h2>Want to check whether your emails are being OPENED...</h2>
+            <h4>Simple, Free, Invisible and Email-embedded trackers are here to aid you!!!</h4>
+            STEP 1 : Compose Your Email.<br>
+            STEP 2 : Generate the INVISIBLE MAIL TRACKER<br>
+            <button onclick="create_inv_img()">GENERATE INVISIBLE TRACKER</button><br>
+            STEP 3 : Paste the INVISIBLE MAIL TRACKER in the body of your Email<br>
+            STEP 4 : Send your Email and activate the INVISIBLE MAIL TRACKER<br>
+            <button onclick="activate_lnk()">ACTIVATE INVISIBLE TRACKER</button><br>
+            That's it...<br>
+            Once you activate the tracker, your mail views are automatically logged.<br>
+            Go to Your Trackers tab to view the logs.<br>
+            How do you want us to notify you when your mail is opened ?<br>
+            <div class="form-check">
+                <input class="form-check-input" onchange="email_notif_check()" type="checkbox" id="email_check">
+                <label class="form-check-label" for="email_check">
+                    Send an Email
+                </label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" onchange="browser_notif_check()" type="checkbox" id="notif_check">
+                <label class="form-check-label" for="notif_check">
+                    Send Browser Notification
+                </label>
+            </div>
+
         </div>
         <div class="tab-pane fade container" id="pills-track">
             <select onchange="links_select_change()" class="form-select" id="links_select">
@@ -163,7 +185,10 @@
                 var uid = firebase.auth().currentUser.uid;
                 var link_ref = firebase.database().ref('users/' + uid + "/links");
                 new_link_key = link_ref.push().key;
-                link_ref.update({ [new_link_key + "/track"]: track_name });
+                link_ref.update({
+                    [new_link_key + "/track"]: track_name,
+                    [new_link_key + "/active"]: false,
+                });
 
                 navigator.clipboard.write([
                     new ClipboardItem({
@@ -187,14 +212,14 @@
         firebase.database().ref(`users/${firebase.auth().currentUser.uid}/links/${new_link_key}/active`).set(true);
     }
 
-    function activate_lnk() {
+    function deactivate_lnk() {
         firebase.database().ref(`users/${firebase.auth().currentUser.uid}/links/${links_key[links_select.value]}/active`).set(false);
     }
 
     var prev_sel_val;
 
     async function links_select_change() {
-        if(prev_sel_val)
+        if (prev_sel_val)
             firebase.database().ref("users/" + firebase.auth().currentUser.uid + "/links/" + links_key[prev_sel_val] + "/logs").off("value");
         firebase.database().ref("users/" + firebase.auth().currentUser.uid + "/links/" + links_key[links_select.value] + "/logs").on("value", (snap) => {
             var v = snap.val();
@@ -208,13 +233,21 @@
 
 
         var isActive = (await firebase.database().ref(`users/${firebase.auth().currentUser.uid}/links/${links_key[links_select.value]}/active`).once("value")).val();
-        if(!isActive){
-            deactivate_btn.disabled=true;
-        }else{
-            deactivate_btn.disabled=false;
+        if (!isActive) {
+            deactivate_btn.disabled = true;
+        } else {
+            deactivate_btn.disabled = false;
         }
 
         prev_sel_val = links_select.value;
+    }
+
+    function email_notif_check(){
+        firebase.database().ref(`users/${firebase.auth().currentUser.uid}/`)
+    }
+
+    function browser_notif_check(){
+
     }
 
 </script>

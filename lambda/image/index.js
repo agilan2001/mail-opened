@@ -36,7 +36,11 @@ exports.handler = async (event) => {
     const response = {
         headers: {
             'Content-Type': 'image/png',
-            'Access-Control-Allow-Origin': '*'
+            'Access-Control-Allow-Origin': '*',
+            'Cache-Control': 'no-store, no-cache, must-revalidate, max-age=0',
+            'Cache-Control': 'post-check=0, pre-check=0',
+            'Pragma': 'no-cache'
+
         },
         statusCode: 200,
         body: 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=',
