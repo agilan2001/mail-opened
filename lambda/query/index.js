@@ -13,7 +13,7 @@ var serviceAccount = {
     "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-15jle%40mail-opened.iam.gserviceaccount.com"
 };
 
-serviceAccount["private_key"] = process.env.FIREBAE_PRIVATE_KEY
+serviceAccount["private_key"] = process.env.FIREBAE_PRIVATE_KEY.replace(/\\n/g, '\n');
 
 admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),

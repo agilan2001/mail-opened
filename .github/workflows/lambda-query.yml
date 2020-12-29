@@ -1,4 +1,4 @@
-name: deploy image function to lambda
+name: deploy query function to lambda
 on: [push]
 jobs:
   deploy_source:
