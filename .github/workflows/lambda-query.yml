@@ -1,4 +1,4 @@
-name: deploy to lambda
+name: deploy image function to lambda
 on: [push]
 jobs:
   deploy_source:
@@ -15,7 +15,7 @@ jobs:
           node-version: ${{ matrix.node-version }}
       - name: npm install and build
         run: |
-          cd lambda
+          cd lambda/query
           npm install
           npm run build --if-present
         env:
@@ -26,7 +26,7 @@ jobs:
 
       - name: Zip output
         run: zip -qq -r bundle.zip ./
-        working-directory: ./lambda
+        working-directory: ./lambda/query
       # - name: zip
       #   uses: montudor/action-zip@v0.1.0
       #   with:
@@ -37,6 +37,6 @@ jobs:
           aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws_region: us-east-2
-          function_name: gmail-read-receipt
-          zip_file: ./lambda/bundle.zip
+          function_name: mail-opened-query
+          zip_file: ./lambda/query/bundle.zip
           timeout: 10
