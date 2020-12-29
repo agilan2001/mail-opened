@@ -2,18 +2,69 @@
 <html>
 
 <head>
+    <meta name="viewport" content='width=device-width, initial-scale=1'>
 
 
     <link type="text/css" rel="stylesheet" href="https://www.gstatic.com/firebasejs/ui/4.6.1/firebase-ui-auth.css" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW"
+        crossorigin="anonymous"></script>
 </head>
 
 <body>
-    <img src="https://xpl6mndw31.execute-api.us-east-2.amazonaws.com/default/gmail-read-receipt">
 
     <h1>Mail OPENED</h1>
-    <div id="firebaseui-auth-container"></div>
 
-    <button onclick="create_inv_img()">INVISIBLE IMAGE</button>
+
+
+    <div class="modal fade" id="myModal" tabindex="-1">
+        <div class="modal-dialog modal-sm modal-dialog-centered">
+            <div class="modal-content">
+
+                <div class='modal-body' id="firebaseui-auth-container"></div>
+            </div>
+        </div>
+    </div>
+
+    <ul class="nav nav-pills mb-3" id="pills-tab">
+        <li class="nav-item">
+            <a class="nav-link active" id="pills-start-tab" data-bs-toggle="pill" href="#pills-start">Getting
+                Started</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="pills-track-tab" data-bs-toggle="pill" href="#pills-track">Your trackers</a>
+        </li>
+    </ul>
+    <div class="tab-content container" id="pills-tabContent">
+        <div class="tab-pane fade show active" id="pills-start">
+            <button onclick="create_inv_img()">INVISIBLE TRACKER</button>
+            <button onclick="activate_lnk()">ACTIVATE TRACKER</button>
+        </div>
+        <div class="tab-pane fade container" id="pills-track">
+            <select onchange="links_select_change()" class="form-select" id="links_select">
+                <option selected disabled>--SELECT TRACKER--</option>
+            </select>
+            <button id="deactivate_btn" onclick="deactivate_lnk()">DEACTIVATE TRACKER</button>
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>IP</th>
+                        <th>User Agent</th>
+                        <th>Time</th>
+                    </tr>
+                </thead>
+                <tbody id="logs_table">
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+
+
+
 </body>
 
 <!-- The core Firebase JS SDK is always required and must be listed first -->
@@ -45,49 +96,54 @@
 
 <script>
 
-    firebase.auth().onAuthStateChanged((user) => {
-        if (!user) {
-            firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL).then(() => {
+    var links_key;
+    var new_link_key;
 
-                var ui = new firebaseui.auth.AuthUI(firebase.auth());
+    firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL).then(() => {
 
-                var uiConfig = {
-                    callbacks: {
-                        signInSuccessWithAuthResult: function (authResult, redirectUrl) {
-                            // User successfully signed in.
-                            // Return type determines whether we continue the redirect automatically
-                            // or whether we leave that to developer to handle.
-                            if (authResult.additionalUserInfo.isNewUser) {
-                                createNewUser(authResult.user.uid, authResult.user.email);
-                            };
-                            return false;
-                        },
-                        uiShown: function () {
-                            // The widget is rendered.
-                            // Hide the loader.
-                            document.getElementById('loader').style.display = 'none';
-                        }
-                    },
-                    // Will use popup for IDP Providers sign-in flow instead of the default, redirect.
-                    signInFlow: 'popup',
-                    signInOptions: [
-                        // Leave the lines as is for the providers you want to offer your users.
-                        {
-                            provider: firebase.auth.EmailAuthProvider.PROVIDER_ID,
-                            signInMethod: firebase.auth.EmailAuthProvider.EMAIL_LINK_SIGN_IN_METHOD,
+        var ui = new firebaseui.auth.AuthUI(firebase.auth());
 
-                        }
-                    ],
+        var uiConfig = {
+            callbacks: {
+                signInSuccessWithAuthResult: function (authResult, redirectUrl) {
 
-                };
+                    if (authResult.additionalUserInfo.isNewUser) {
+                        createNewUser(authResult.user.uid, authResult.user.email);
+                    }
+                    return false;
+                },
 
-                ui.start('#firebaseui-auth-container', uiConfig);
+            },
+            // Will use popup for IDP Providers sign-in flow instead of the default, redirect.
+            signInFlow: 'popup',
+            signInOptions: [
+                // Leave the lines as is for the providers you want to offer your users.
+                {
+                    provider: firebase.auth.EmailAuthProvider.PROVIDER_ID,
+                    signInMethod: firebase.auth.EmailAuthProvider.EMAIL_LINK_SIGN_IN_METHOD,
 
-            })
-        } else {
-            document.getElementById("firebaseui-auth-container").style.display = 'none';
-        }
+                }
+            ],
+
+        };
+        ui.start('#firebaseui-auth-container', uiConfig);
+
+
     })
+
+    firebase.auth().onAuthStateChanged(async (user) => {
+        var links = (await firebase.database().ref('users/' + user.uid + '/links').once("value")).val();
+        var ih = `<option selected disabled>--SELECT TRACKER--</option>`;
+
+        links_key = {};
+        for (x in links) {
+            links_key[links[x].track] = x;
+            ih += `<option>${links[x].track}</option>`;
+        }
+
+        links_select.innerHTML = ih;
+    })
+
 
     function createNewUser(uid, mail) {
         fetch("https://iflyrlquq5.execute-api.us-east-2.amazonaws.com/default/mail-opened-query", {
@@ -101,17 +157,64 @@
     }
 
     function create_inv_img() {
-        var track_name = prompt("Track Name ?");
-        var uid = firebase.auth().currentUser.uid;
-        var link_ref = firebase.database().ref('users/' + uid + "/links");
-        var new_link_key = link_ref.push().key;
-        link_ref.update({ [new_link_key + "/track"]: track_name });
+        if (firebase.auth().currentUser) {
+            var track_name = prompt("Track Name ?");
+            if (track_name) {
+                var uid = firebase.auth().currentUser.uid;
+                var link_ref = firebase.database().ref('users/' + uid + "/links");
+                new_link_key = link_ref.push().key;
+                link_ref.update({ [new_link_key + "/track"]: track_name });
 
-        navigator.clipboard.write([
-            new ClipboardItem({
-                ['text/html']: new Blob([`<img src="https://xpl6mndw31.execute-api.us-east-2.amazonaws.com/default/gmail-read-receipt/?key=${new_link_key}&uid=${uid}">`], { type: 'text/html' })
-            })
-        ])
+                navigator.clipboard.write([
+                    new ClipboardItem({
+                        ['text/html']: new Blob([`<img src="https://xpl6mndw31.execute-api.us-east-2.amazonaws.com/default/gmail-read-receipt/?key=${new_link_key}&uid=${uid}">`], { type: 'text/html' })
+                    })
+                ])
+
+                alert("Tracker copied to Clipboard")
+            }
+        } else {
+            var myModal = new bootstrap.Modal(document.getElementById('myModal'));
+            myModal.show();
+            document.getElementById("firebaseui-auth-container").style.display = 'block';
+            document.getElementsByClassName("firebaseui-id-secondary-link")[0].addEventListener('click', () => { myModal.hide() })
+
+        }
+    }
+
+
+    function activate_lnk() {
+        firebase.database().ref(`users/${firebase.auth().currentUser.uid}/links/${new_link_key}/active`).set(true);
+    }
+
+    function activate_lnk() {
+        firebase.database().ref(`users/${firebase.auth().currentUser.uid}/links/${links_key[links_select.value]}/active`).set(false);
+    }
+
+    var prev_sel_val;
+
+    async function links_select_change() {
+        if(prev_sel_val)
+            firebase.database().ref("users/" + firebase.auth().currentUser.uid + "/links/" + links_key[prev_sel_val] + "/logs").off("value");
+        firebase.database().ref("users/" + firebase.auth().currentUser.uid + "/links/" + links_key[links_select.value] + "/logs").on("value", (snap) => {
+            var v = snap.val();
+            var ih = "";
+            for (x in v) {
+                ih += `<tr><td>${v[x]['ip']}</td><td>${v[x]['ua']}</td><td>${v[x]['dt']}</td></tr>`;
+            }
+
+            logs_table.innerHTML = ih;
+        })
+
+
+        var isActive = (await firebase.database().ref(`users/${firebase.auth().currentUser.uid}/links/${links_key[links_select.value]}/active`).once("value")).val();
+        if(!isActive){
+            deactivate_btn.disabled=true;
+        }else{
+            deactivate_btn.disabled=false;
+        }
+
+        prev_sel_val = links_select.value;
     }
 
 </script>

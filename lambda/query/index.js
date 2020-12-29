@@ -25,12 +25,17 @@ var db = admin.database();
 exports.handler = async (event) => {
 
     var body = JSON.parse(event.body);
+    var { sourceIp, userAgent } = event.requestContext.identity;
 
-    if(body.query=="create"){
-        await db.ref('users/' + body.uid + "/email").set(body.mail);
+    if (body.query == "create") {
+        await db.ref('users/' + body.uid + "/info").set({
+            mail: body.mail,
+            ip: sourceIp,
+            ua: userAgent,
+        });
         return {
             statusCode: 200,
-            body: "DONE",   
+            body: "DONE",
         }
     }
 };
