@@ -64,3 +64,4 @@ node_modules/
 
 # dotenv environment variables file
 .env
+lambda/query/mail-opened-firebase-admin-sdk-15jle-5e5adfa07b.json
