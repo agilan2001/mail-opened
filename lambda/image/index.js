@@ -25,7 +25,7 @@ var db = admin.database();
 exports.handler = async (event) => {
     var { key, uid } = event.queryStringParameters;
     var { sourceIp, userAgent } = event.requestContext.identity;
-    db.ref(`users/${uid}/links/${key}/logs`).push({
+    await db.ref(`users/${uid}/links/${key}/logs`).push({
         ip: sourceIp,
         ua: userAgent
     })
