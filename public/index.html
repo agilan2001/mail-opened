@@ -12,6 +12,8 @@
 
     <h1>Mail OPENED</h1>
     <div id="firebaseui-auth-container"></div>
+
+    <button onclick="create_inv_img()">INVISIBLE IMAGE</button>
 </body>
 
 <!-- The core Firebase JS SDK is always required and must be listed first -->
@@ -55,8 +57,8 @@
                             // User successfully signed in.
                             // Return type determines whether we continue the redirect automatically
                             // or whether we leave that to developer to handle.
-                            if (authResult.additionalUserInfo.isNewUser()) {
-                                createNewUser(authResult.user.uid, authResult.user.email );
+                            if (authResult.additionalUserInfo.isNewUser) {
+                                createNewUser(authResult.user.uid, authResult.user.email);
                             };
                             return false;
                         },
@@ -98,31 +100,19 @@
         })
     }
 
+    function create_inv_img() {
+        var track_name = prompt("Track Name ?");
+        var uid = firebase.auth().currentUser.uid;
+        var link_ref = firebase.database().ref('users/' + uid + "/links");
+        var new_link_key = link_ref.push().key;
+        link_ref.update({ [new_link_key + "/track"]: track_name });
 
-
-
-
-    // ui.start('#firebaseui-auth-container', {
-    //     signInOptions: [
-    //         {
-    //             provider: firebase.auth.EmailAuthProvider.PROVIDER_ID,
-    //             signInMethod: firebase.auth.EmailAuthProvider.EMAIL_LINK_SIGN_IN_METHOD
-    //         }
-    //     ],
-    // });
-
-
-    // if (ui.isPendingRedirect()) {
-    //     ui.start('#firebaseui-auth-container', uiConfig);
-    // }
-
-    /*
-    event['identity']['sourceIp']
-    navigator.clipboard.write([
-        new ClipboardItem({
-            ['text/html']: new Blob(['<img src="https://xpl6mndw31.execute-api.us-east-2.amazonaws.com/default/gmail-read-receipt">'], { type: 'text/html' })
-        })
-    ])*/
+        navigator.clipboard.write([
+            new ClipboardItem({
+                ['text/html']: new Blob([`<img src="https://xpl6mndw31.execute-api.us-east-2.amazonaws.com/default/gmail-read-receipt/?key=${new_link_key}&uid=${uid}">`], { type: 'text/html' })
+            })
+        ])
+    }
 
 </script>
 

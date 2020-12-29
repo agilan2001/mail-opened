@@ -27,9 +27,7 @@ exports.handler = async (event) => {
     var body = JSON.parse(event.body);
 
     if(body.query=="create"){
-        await db.ref('users/' + body.uid + "/email").set({
-            mail:body.mail
-        });
+        await db.ref('users/' + body.uid + "/email").set(body.mail);
         return {
             statusCode: 200,
             body: "DONE",   
