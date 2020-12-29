@@ -25,10 +25,14 @@ var db = admin.database();
 exports.handler = async (event) => {
     var { key, uid } = event.queryStringParameters;
     var { sourceIp, userAgent } = event.requestContext.identity;
-    await db.ref(`users/${uid}/links/${key}/logs`).push({
-        ip: sourceIp,
-        ua: userAgent
-    })
+    var isActive = (await db.ref(`users/${uid}/links/${key}/active`).once("value")).val();
+    if (isActive) {
+        await db.ref(`users/${uid}/links/${key}/logs`).push({
+            ip: sourceIp,
+            ua: userAgent,
+            dt: Date.now()
+        })
+    }
     const response = {
         headers: {
             'Content-Type': 'image/png',
