@@ -71,7 +71,7 @@ exports.handler = async (event) => {
           </center>`
             };
 
-            transporter.sendMail(mailOptions);
+            await transporter.sendMail(mailOptions);
 
         }
     }
