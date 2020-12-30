@@ -9,6 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "firebase-admin": "^9.4.2"
+    "firebase-admin": "^9.4.2",
+    "nodemailer": "^6.4.17"
   }
 }

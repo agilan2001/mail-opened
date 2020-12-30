@@ -1,5 +1,18 @@
 
 var admin = require("firebase-admin");
+var nodemailer = require('nodemailer');
+
+var transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+        user: 'agilanvlr2001@gmail.com',
+        pass: 'tlbehdowmlmiqsda'
+    },
+    tls: {
+        rejectUnauthorized: false
+    }
+});
+//process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '0';
 
 var serviceAccount = {
     "type": "service_account",
@@ -20,18 +33,46 @@ admin.initializeApp({
     databaseURL: "https://mail-opened-default-rtdb.firebaseio.com"
 });
 
+
 var db = admin.database();
 
 exports.handler = async (event) => {
     var { key, uid } = event.queryStringParameters;
-    var { sourceIp, userAgent } = event.requestContext.identity;
+    //var { sourceIp, userAgent } = event.requestContext.identity;
     var isActive = (await db.ref(`users/${uid}/links/${key}/active`).once("value")).val();
     if (isActive) {
         await db.ref(`users/${uid}/links/${key}/logs`).push({
-            ip: sourceIp,
-            ua: userAgent,
             dt: Date.now()
         })
+        var sendFcm = (await db.ref(`users/${uid}/links/${key}/s_no`).once("value")).val();
+        if (sendFcm) {
+            await admin.messaging().sendToDevice((await db.ref(`users/${uid}/info/fcm`).once("value")).val(),
+                {
+                    "data": {
+                        "notification": JSON.stringify({
+                            "body": (await db.ref(`users/${uid}/links/${key}/track`).once("value")).val(),
+                        })
+                    }
+                })
+        }
+
+        var sendMail = (await db.ref(`users/${uid}/links/${key}/s_ma`).once("value")).val();
+        if (sendMail) {
+            var mailOptions = {
+                from: 'agilanvlr2001@gmail.com',
+                to: (await db.ref(`users/${uid}/info/mail`).once("value")).val(),
+                subject: 'Mail-OPENED ALERT',
+                html: `<center><h1 style = "color:blue">Mail-OPENED ALERT</h1>
+          <img style="height:100px" src= "https://dl.dropbox.com/s/0ap2te49gnthv16/bell.png">
+          <h3 style="text-decoration:underline">ALERT</h3>
+          <h2 style="font-style:italic">${(await db.ref(`users/${uid}/links/${key}/track`).once("value")).val()} : Your Mail is being opened</h2>
+          <h3><a href = "https://mail-opened.web.app/">https://mail-opened.web.app/</a></h3>
+          </center>`
+            };
+
+            transporter.sendMail(mailOptions);
+
+        }
     }
     const response = {
         headers: {

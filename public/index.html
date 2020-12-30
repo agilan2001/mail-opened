@@ -39,9 +39,10 @@
     <div class="tab-content container" id="pills-tabContent">
         <div class="tab-pane fade show active" id="pills-start">
             <h2>Want to check whether your emails are being OPENED...</h2>
-            <h4>Simple, Free, Invisible and Email-embedded trackers are here to aid you!!!</h4>
+            <h4>Simple, Free and Invisible Email-embedded trackers are here to aid you!!!</h4>
             STEP 1 : Compose Your Email.<br>
             STEP 2 : Generate the INVISIBLE MAIL TRACKER<br>
+            Name your Tracker : <input type="text" placeholder="eg. Boss Email Tracker"><br>
             <button onclick="create_inv_img()">GENERATE INVISIBLE TRACKER</button><br>
             STEP 3 : Paste the INVISIBLE MAIL TRACKER in the body of your Email<br>
             STEP 4 : Send your Email and activate the INVISIBLE MAIL TRACKER<br>
@@ -72,8 +73,7 @@
             <table class="table table-hover">
                 <thead>
                     <tr>
-                        <th>IP</th>
-                        <th>User Agent</th>
+                        <th>#</th>
                         <th>Time</th>
                     </tr>
                 </thead>
@@ -98,6 +98,7 @@
 <script src="https://www.gstatic.com/firebasejs/8.2.1/firebase-auth.js"></script>
 <script src="https://www.gstatic.com/firebasejs/ui/4.6.1/firebase-ui-auth.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.2.1/firebase-database.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.2.1/firebase-messaging.js"></script>
 
 <script>
     // Your web app's Firebase configuration
@@ -120,6 +121,7 @@
 
     var links_key;
     var new_link_key;
+    const messaging = firebase.messaging();
 
     firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL).then(() => {
 
@@ -188,6 +190,8 @@
                 link_ref.update({
                     [new_link_key + "/track"]: track_name,
                     [new_link_key + "/active"]: false,
+                    [new_link_key + "/s_ma"]: false,
+                    [new_link_key + "/s_no"]: false,
                 });
 
                 navigator.clipboard.write([
@@ -224,8 +228,10 @@
         firebase.database().ref("users/" + firebase.auth().currentUser.uid + "/links/" + links_key[links_select.value] + "/logs").on("value", (snap) => {
             var v = snap.val();
             var ih = "";
+            var cnt = 1;
             for (x in v) {
-                ih += `<tr><td>${v[x]['ip']}</td><td>${v[x]['ua']}</td><td>${v[x]['dt']}</td></tr>`;
+                ih += `<tr><td>${cnt}</td><td>${new Date(v[x]['dt']).toLocaleString('en-IN')}</td></tr>`;
+                cnt++;
             }
 
             logs_table.innerHTML = ih;
@@ -242,13 +248,45 @@
         prev_sel_val = links_select.value;
     }
 
-    function email_notif_check(){
-        firebase.database().ref(`users/${firebase.auth().currentUser.uid}/`)
+    function email_notif_check() {
+        if (email_check.checked)
+            firebase.database().ref(`users/${firebase.auth().currentUser.uid}/links/${new_link_key}/s_ma`).set(true);
+        else
+            firebase.database().ref(`users/${firebase.auth().currentUser.uid}/links/${new_link_key}/s_ma`).set(false);
     }
 
-    function browser_notif_check(){
+    function browser_notif_check() {
+        if (notif_check.checked) {
+            messaging.getToken()
+                .then(function (token) {
+                    firebase.database().ref(`users/${firebase.auth().currentUser.uid}/info/fcm`).set(token);
+                })
+            firebase.database().ref(`users/${firebase.auth().currentUser.uid}/links/${new_link_key}/s_no`).set(true);
+        }else{
+            firebase.database().ref(`users/${firebase.auth().currentUser.uid}/links/${new_link_key}/s_no`).set(false);
+        }
 
     }
+
+
+    messaging.onMessage(function (payload) {
+        var notif_info = JSON.parse(payload.data.notification);
+        var title = "Mail-Opened ⏰";
+        var options = {
+            icon: "",
+            body: notif_info.body + ": Your Mail is being viewed...",
+            icon: "https://dl.dropbox.com/s/lajvp5srja4h4ny/bell-small.png",
+            actions: [
+                { action: 'b', title: '👍DONE' },
+                { action: 'a', title: 'Mail-Opened' }
+            ]
+        }
+        navigator.serviceWorker.ready.then(function (registration) {
+            registration.showNotification(title, options);
+        });
+
+    });
+
 
 </script>
 
