@@ -128,6 +128,11 @@
     var new_link_key;
 
     const messaging = firebase.messaging();
+
+    navigator.serviceWorker.register('firebase-messaging-sw.js', {
+        scope: '.' 
+    });
+
     firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL).then(() => {
 
         var ui = new firebaseui.auth.AuthUI(firebase.auth());
