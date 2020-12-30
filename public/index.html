@@ -44,7 +44,7 @@
             STEP 2 : Generate the INVISIBLE MAIL TRACKER<br>
             Name your Tracker : <input type="text" placeholder="eg. Boss Email Tracker"><br>
             <button onclick="create_inv_img()">GENERATE INVISIBLE TRACKER</button><br>
-            <div id="tracker_div">&nbsp;&nbsp;<img id="tracker_img" style="display: none;">&nbsp;&nbsp;</div><br>
+            <img id="tracker_img" style="display: none;"><br>
             STEP 3 : Paste the INVISIBLE MAIL TRACKER in the body of your Email<br>
             STEP 4 : Send your Email and activate the INVISIBLE MAIL TRACKER<br>
             <button onclick="activate_lnk()">ACTIVATE INVISIBLE TRACKER</button><br>
@@ -210,11 +210,11 @@
                 }
                 tracker_img.src = `https://xpl6mndw31.execute-api.us-east-2.amazonaws.com/default/gmail-read-receipt/?key=${new_link_key}&uid=${uid}`
 
-                navigator.clipboard.write([
-                    new ClipboardItem({
-                        ['text/html']: new Blob([`<img src="https://xpl6mndw31.execute-api.us-east-2.amazonaws.com/default/gmail-read-receipt/?key=${new_link_key}&uid=${uid}">`], { type: 'text/html' })
-                    })
-                ])
+                // navigator.clipboard.write([
+                //     new ClipboardItem({
+                //         ['text/html']: new Blob([`<img src="https://xpl6mndw31.execute-api.us-east-2.amazonaws.com/default/gmail-read-receipt/?key=${new_link_key}&uid=${uid}">`], { type: 'text/html' })
+                //     })
+                // ])
 
 
             }
