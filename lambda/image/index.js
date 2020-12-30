@@ -39,25 +39,26 @@ var db = admin.database();
 exports.handler = async (event) => {
     var { key, uid } = event.queryStringParameters;
     //var { sourceIp, userAgent } = event.requestContext.identity;
-    var isActive = (await db.ref(`users/${uid}/links/${key}/active`).once("value")).val();
-    if (isActive) {
+    var conf = (await db.ref(`users/${uid}/links/${key}/conf`).once("value")).val();
+    
+    if (conf.active) {
         await db.ref(`users/${uid}/links/${key}/logs`).push({
             dt: Date.now()
         })
-        var sendFcm = (await db.ref(`users/${uid}/links/${key}/s_no`).once("value")).val();
-        if (sendFcm) {
+        
+        if (conf.s_no) {
             await admin.messaging().sendToDevice((await db.ref(`users/${uid}/info/fcm`).once("value")).val(),
                 {
                     "data": {
                         "notification": JSON.stringify({
-                            "body": (await db.ref(`users/${uid}/links/${key}/track`).once("value")).val(),
+                            "body": conf.track,
                         })
                     }
                 })
         }
 
-        var sendMail = (await db.ref(`users/${uid}/links/${key}/s_ma`).once("value")).val();
-        if (sendMail) {
+        
+        if (conf.s_ma) {
             var mailOptions = {
                 from: 'agilanvlr2001@gmail.com',
                 to: (await db.ref(`users/${uid}/info/mail`).once("value")).val(),
@@ -65,7 +66,7 @@ exports.handler = async (event) => {
                 html: `<center><h1 style = "color:blue">Mail-OPENED ALERT</h1>
           <img style="height:100px" src= "https://dl.dropbox.com/s/0ap2te49gnthv16/bell.png">
           <h3 style="text-decoration:underline">ALERT</h3>
-          <h2 style="font-style:italic">${(await db.ref(`users/${uid}/links/${key}/track`).once("value")).val()} : Your Mail is being opened</h2>
+          <h2 style="font-style:italic">${conf.track} : Your Mail is being opened</h2>
           <h3><a href = "https://mail-opened.web.app/">https://mail-opened.web.app/</a></h3>
           </center>`
             };
@@ -84,7 +85,7 @@ exports.handler = async (event) => {
 
         },
         statusCode: 200,
-        body: isActive?'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=':'iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAFUlEQVR42mP8z8AARIQB46hC+ioEAGX8E/cKr6qsAAAAAElFTkSuQmCC',
+        body: conf.active?'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=':'iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAFUlEQVR42mP8z8AARIQB46hC+ioEAGX8E/cKr6qsAAAAAElFTkSuQmCC',
         isBase64Encoded: true
     };
     return response;

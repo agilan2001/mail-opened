@@ -33,7 +33,8 @@
                 Started</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" id="pills-track-tab" data-bs-toggle="pill" href="#pills-track">Your trackers</a>
+            <a class="nav-link" id="pills-track-tab" data-bs-toggle="pill" href="#pills-track"
+                onclick="update_sel(firebase.auth().currentUser)">Your trackers</a>
         </li>
     </ul>
     <div class="tab-content container" id="pills-tabContent">
@@ -42,16 +43,34 @@
             <h4>Simple, Free and Invisible Email-embedded trackers are here to aid you!!!</h4>
             STEP 1 : Compose Your Email.<br>
             STEP 2 : Generate the INVISIBLE MAIL TRACKER<br>
-            Name your Tracker : <input type="text" placeholder="eg. Boss Email Tracker"><br>
+            Name your Tracker : <input id="tracker_name_txt" type="text" placeholder="eg. Boss Email Tracker"><br>
             <button onclick="create_inv_img()">GENERATE INVISIBLE TRACKER</button><br>
-            <div id = "tracker_div">&nbsp;&nbsp;<img id="tracker_img">&nbsp;&nbsp;</div>&nbsp;
+            <div id="tracker_div">&nbsp;&nbsp;<img id="tracker_img">&nbsp;&nbsp;</div>&nbsp;
             <button disabled="true" id="copy_tracker_btn" onclick="copy_tracker()">COPY INVISIBLE TRACKER</button><br>
             STEP 3 : Paste the INVISIBLE MAIL TRACKER in the body of your Email<br>
-            STEP 4 : Send your Email and activate the INVISIBLE MAIL TRACKER<br>
-            <button onclick="activate_lnk()">ACTIVATE INVISIBLE TRACKER</button><br>
+            STEP 4 : Send your Email. Goto Your Trackers section and activate the INVISIBLE MAIL TRACKER<br>
+
             That's it...<br>
             Once you activate the tracker, your mail views are automatically logged.<br>
-            Go to Your Trackers tab to view the logs.<br>
+
+        </div>
+        <div class="tab-pane fade container" id="pills-track">
+            <select onchange="links_select_change()" class="form-select" id="links_select">
+                <option selected disabled>--SELECT TRACKER--</option>
+            </select>
+            <button id="toggle_activate_btn" onclick="toggle_activate_lnk()">ACTIVATE TRACKER</button>
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Time</th>
+                    </tr>
+                </thead>
+                <tbody id="logs_table">
+
+                </tbody>
+            </table>
+
             How do you want us to notify you when your mail is opened ?<br>
             <div class="form-check">
                 <input class="form-check-input" onchange="email_notif_check()" type="checkbox" id="email_check">
@@ -67,23 +86,7 @@
             </div>
 
         </div>
-        <div class="tab-pane fade container" id="pills-track">
-            <select onchange="links_select_change()" class="form-select" id="links_select">
-                <option selected disabled>--SELECT TRACKER--</option>
-            </select>
-            <button id="deactivate_btn" onclick="deactivate_lnk()">DEACTIVATE TRACKER</button>
-            <table class="table table-hover">
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>Time</th>
-                    </tr>
-                </thead>
-                <tbody id="logs_table">
 
-                </tbody>
-            </table>
-        </div>
     </div>
 
 
@@ -121,7 +124,7 @@
 
 <script>
 
-    var links_key;
+    var tracks_ar;
     var new_link_key;
 
     const messaging = firebase.messaging();
@@ -157,18 +160,21 @@
 
     })
 
-    firebase.auth().onAuthStateChanged(async (user) => {
-        var links = (await firebase.database().ref('users/' + user.uid + '/links').once("value")).val();
+    firebase.auth().onAuthStateChanged(update_sel);
+
+    async function update_sel(user) {
+        var tracks_ref = (await firebase.database().ref('users/' + user.uid + '/info/tracks').once("value")).val();
         var ih = `<option selected disabled>--SELECT TRACKER--</option>`;
 
-        links_key = {};
-        for (x in links) {
-            links_key[links[x].track] = x;
-            ih += `<option>${links[x].track}</option>`;
+
+        tracks_ar = [];
+        for (x in tracks_ref) {
+            tracks_ar.push(tracks_ref[x])
+            ih += `<option>${tracks_ref[x]}</option>`;
         }
 
         links_select.innerHTML = ih;
-    })
+    }
 
 
     function createNewUser(uid, mail) {
@@ -182,33 +188,44 @@
         })
     }
 
-    function create_inv_img() {
+    async function create_inv_img() {
         if (firebase.auth().currentUser) {
-            var track_name = prompt("Track Name ?");
+            var track_name = tracker_name_txt.value;
             if (track_name) {
                 var uid = firebase.auth().currentUser.uid;
+
+                var cur_cnt;
+                await firebase.database().ref('users/' + uid + "/info/cnt").transaction((cnt) => { cur_cnt = cnt; return cnt + 1; });
+
+
+                new_link_key = "l" + (cur_cnt + 1);
+
                 var link_ref = firebase.database().ref('users/' + uid + "/links");
-                new_link_key = link_ref.push().key;
                 link_ref.update({
-                    [new_link_key + "/track"]: track_name,
-                    [new_link_key + "/active"]: false,
-                    [new_link_key + "/s_ma"]: false,
-                    [new_link_key + "/s_no"]: false,
+                    [new_link_key + "/conf/track"]: track_name,
+                    [new_link_key + "/conf/active"]: false,
+                    [new_link_key + "/conf/s_ma"]: false,
+                    [new_link_key + "/conf/s_no"]: false,
                 });
 
                 tracker_img = document.getElementById("tracker_img");
 
                 tracker_img.onload = () => {
-                    copy_tracker_btn.disabled=false;
+                    copy_tracker_btn.disabled = false;
 
                 }
                 tracker_img.src = `https://xpl6mndw31.execute-api.us-east-2.amazonaws.com/default/gmail-read-receipt/?key=${new_link_key}&uid=${uid}`
+
+
+                firebase.database().ref('users/' + uid + "/info/tracks").push(track_name);
 
                 // navigator.clipboard.write([
                 //     new ClipboardItem({
                 //         ['text/html']: new Blob([`<img src="https://xpl6mndw31.execute-api.us-east-2.amazonaws.com/default/gmail-read-receipt/?key=${new_link_key}&uid=${uid}">`], { type: 'text/html' })
                 //     })
                 // ])
+
+
 
 
             }
@@ -230,27 +247,29 @@
         range.selectNode(document.getElementById("tracker_div"))
         selection.addRange(range);
         var j = document.execCommand("copy")
-        alert(j)
+
         //selection.removeAllRanges();
-        
+
 
     }
 
 
-    function activate_lnk() {
-        firebase.database().ref(`users/${firebase.auth().currentUser.uid}/links/${new_link_key}/active`).set(true);
-    }
-
-    function deactivate_lnk() {
-        firebase.database().ref(`users/${firebase.auth().currentUser.uid}/links/${links_key[links_select.value]}/active`).set(false);
+    async function toggle_activate_lnk() {
+        var cur;
+        await firebase.database().ref(`users/${firebase.auth().currentUser.uid}/links/${"l" + (tracks_ar.indexOf(links_select.value) + 1)}/conf/active`).transaction(val => { cur = !val; return cur; });
+        if (!cur) {
+            toggle_activate_btn.innerHTML = "ACTIVATE TRACKER";
+        } else {
+            toggle_activate_btn.innerHTML = "DEACTIVATE TRACKER";
+        }
     }
 
     var prev_sel_val;
 
     async function links_select_change() {
         if (prev_sel_val)
-            firebase.database().ref("users/" + firebase.auth().currentUser.uid + "/links/" + links_key[prev_sel_val] + "/logs").off("value");
-        firebase.database().ref("users/" + firebase.auth().currentUser.uid + "/links/" + links_key[links_select.value] + "/logs").on("value", (snap) => {
+            firebase.database().ref("users/" + firebase.auth().currentUser.uid + "/links/" + "l" + (tracks_ar.indexOf(prev_sel_val) + 1) + "/logs").off("value");
+        firebase.database().ref("users/" + firebase.auth().currentUser.uid + "/links/" + "l" + (tracks_ar.indexOf(prev_sel_val) + 1) + "/logs").on("value", (snap) => {
             var v = snap.val();
             var ih = "";
             var cnt = 1;
@@ -262,22 +281,25 @@
             logs_table.innerHTML = ih;
         })
 
+        var conf = (await firebase.database().ref(`users/${firebase.auth().currentUser.uid}/links/${"l" + (tracks_ar.indexOf(links_select.value) + 1)}/conf`).once("value")).val();
 
-        var isActive = (await firebase.database().ref(`users/${firebase.auth().currentUser.uid}/links/${links_key[links_select.value]}/active`).once("value")).val();
+        console.log(conf);
+        var isActive = conf.active;
         if (!isActive) {
-            deactivate_btn.disabled = true;
+            toggle_activate_btn.innerHTML = "ACTIVATE TRACKER";
         } else {
-            deactivate_btn.disabled = false;
+            toggle_activate_btn.innerHTML = "DEACTIVATE TRACKER";
         }
+
+        email_check.checked = conf.s_ma;
+
+        notif_check.checked = conf.s_no;
 
         prev_sel_val = links_select.value;
     }
 
     function email_notif_check() {
-        if (email_check.checked)
-            firebase.database().ref(`users/${firebase.auth().currentUser.uid}/links/${new_link_key}/s_ma`).set(true);
-        else
-            firebase.database().ref(`users/${firebase.auth().currentUser.uid}/links/${new_link_key}/s_ma`).set(false);
+        firebase.database().ref(`users/${firebase.auth().currentUser.uid}/links/${"l" + (tracks_ar.indexOf(links_select.value) + 1)}/conf/s_ma`).set(email_check.checked);
     }
 
     function browser_notif_check() {
@@ -286,10 +308,10 @@
                 .then(function (token) {
                     firebase.database().ref(`users/${firebase.auth().currentUser.uid}/info/fcm`).set(token);
                 })
-            firebase.database().ref(`users/${firebase.auth().currentUser.uid}/links/${new_link_key}/s_no`).set(true);
-        } else {
-            firebase.database().ref(`users/${firebase.auth().currentUser.uid}/links/${new_link_key}/s_no`).set(false);
+
         }
+        firebase.database().ref(`users/${firebase.auth().currentUser.uid}/links/${"l" + (tracks_ar.indexOf(links_select.value) + 1)}/conf/s_no`).set(notif_check.checked);
+
 
     }
 

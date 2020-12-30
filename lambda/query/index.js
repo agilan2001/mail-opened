@@ -29,7 +29,8 @@ exports.handler = async (event) => {
 
     if (body.query == "create") {
         await db.ref('users/' + body.uid + "/info").set({
-            mail: body.mail
+            mail: body.mail,
+            cnt: 0
         });
         return {
             statusCode: 200,
