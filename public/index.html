@@ -43,8 +43,8 @@
             STEP 1 : Compose Your Email.<br>
             STEP 2 : Generate the INVISIBLE MAIL TRACKER<br>
             Name your Tracker : <input type="text" placeholder="eg. Boss Email Tracker"><br>
-            <button onclick="create_inv_img()">GENERATE INVISIBLE TRACKER</button><br><br>
-            <div id="tracker_div">&nbsp;&nbsp;<img id="tracker_img">&nbsp;&nbsp;</div><br>
+            <button onclick="create_inv_img()">GENERATE INVISIBLE TRACKER</button><br>
+            <img id="tracker_img" style="display: none;"><br>
             STEP 3 : Paste the INVISIBLE MAIL TRACKER in the body of your Email<br>
             STEP 4 : Send your Email and activate the INVISIBLE MAIL TRACKER<br>
             <button onclick="activate_lnk()">ACTIVATE INVISIBLE TRACKER</button><br>
@@ -202,10 +202,10 @@
                     var selection = window.getSelection();
                     selection.removeAllRanges();
                     var range = document.createRange();
-                    range.selectNode(document.getElementById("tracker_div"));
+                    range.selectNode(tracker_img);
                     selection.addRange(range);
                     document.execCommand("copy");
-                    
+                    selection.removeAllRanges();
                     alert("Tracker copied to Clipboard")
                 }
                 tracker_img.src = `https://xpl6mndw31.execute-api.us-east-2.amazonaws.com/default/gmail-read-receipt/?key=${new_link_key}&uid=${uid}`
