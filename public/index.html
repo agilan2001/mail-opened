@@ -229,8 +229,8 @@
         var range = document.createRange();
         range.selectNode(document.getElementById("tracker_img"))
         selection.addRange(range);
-        alert(document.execCommand("copy"));
-        selection.removeAllRanges();
+        document.execCommand("copy")
+        //selection.removeAllRanges();
         
 
     }
