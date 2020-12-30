@@ -195,15 +195,20 @@
                     [new_link_key + "/s_no"]: false,
                 });
 
+                tracker_img = document.getElementById("tracker_img");
+
+                tracker_img.onload = () => {
+                    tracker_img.style.display = 'block';
+                    var selection = window.getSelection();
+                    selection.removeAllRanges();
+                    var range = document.createRange();
+                    range.selectNode(tracker_img);
+                    selection.addRange(range);
+                    document.execCommand("copy");
+                    selection.removeAllRanges();
+                    alert("Tracker copied to Clipboard")
+                }
                 tracker_img.src = `https://xpl6mndw31.execute-api.us-east-2.amazonaws.com/default/gmail-read-receipt/?key=${new_link_key}&uid=${uid}`
-                tracker_img.style.display = 'block';
-                var selection = window.getSelection();
-                selection.removeAllRanges();
-                var range = document.createRange();
-                range.selectNode(tracker_img);
-                selection.addRange(range);
-                document.execCommand("copy");
-                selection.removeAllRanges();
 
                 // navigator.clipboard.write([
                 //     new ClipboardItem({
@@ -211,7 +216,7 @@
                 //     })
                 // ])
 
-                alert("Tracker copied to Clipboard")
+
             }
         } else {
             var myModal = new bootstrap.Modal(document.getElementById('myModal'));
@@ -273,7 +278,7 @@
                     firebase.database().ref(`users/${firebase.auth().currentUser.uid}/info/fcm`).set(token);
                 })
             firebase.database().ref(`users/${firebase.auth().currentUser.uid}/links/${new_link_key}/s_no`).set(true);
-        }else{
+        } else {
             firebase.database().ref(`users/${firebase.auth().currentUser.uid}/links/${new_link_key}/s_no`).set(false);
         }
 
