@@ -283,7 +283,6 @@
 
         var conf = (await firebase.database().ref(`users/${firebase.auth().currentUser.uid}/links/${"l" + (tracks_ar.indexOf(links_select.value) + 1)}/conf`).once("value")).val();
 
-        console.log(conf);
         var isActive = conf.active;
         if (!isActive) {
             toggle_activate_btn.innerHTML = "ACTIVATE TRACKER";
@@ -317,6 +316,7 @@
 
 
     messaging.onMessage(function (payload) {
+        console.log(payload)
         var notif_info = JSON.parse(payload.data.notification);
         var title = "Mail-Opened ⏰";
         var options = {
