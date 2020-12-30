@@ -205,7 +205,7 @@
                     range.selectNode(tracker_img);
                     selection.addRange(range);
                     document.execCommand("copy");
-                    selection.removeAllRanges();
+                    
                     alert("Tracker copied to Clipboard")
                 }
                 tracker_img.src = `https://xpl6mndw31.execute-api.us-east-2.amazonaws.com/default/gmail-read-receipt/?key=${new_link_key}&uid=${uid}`
