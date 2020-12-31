@@ -34,7 +34,7 @@
         </li>
         <li class="nav-item">
             <a class="nav-link" id="pills-track-tab" data-bs-toggle="pill" href="#pills-track"
-                onclick="update_sel(firebase.auth().currentUser)">My Trackers</a>
+                onclick="trackers_tab_show()">My Trackers</a>
         </li>
     </ul>
     <div class="tab-content container" id="pills-tabContent">
@@ -130,7 +130,7 @@
     const messaging = firebase.messaging();
 
     navigator.serviceWorker.register('firebase-messaging-sw.js', {
-        scope: '.' 
+        scope: '.'
     });
 
     firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL).then(() => {
@@ -168,17 +168,28 @@
     firebase.auth().onAuthStateChanged(update_sel);
 
     async function update_sel(user) {
-        var tracks_ref = (await firebase.database().ref('users/' + user.uid + '/info/tracks').once("value")).val();
-        var ih = `<option selected disabled>--SELECT TRACKER--</option>`;
+        if (user) {
+            var tracks_ref = (await firebase.database().ref('users/' + user.uid + '/info/tracks').once("value")).val();
+            var ih = `<option selected disabled>--SELECT TRACKER--</option>`;
 
 
-        tracks_ar = [];
-        for (x in tracks_ref) {
-            tracks_ar.push(tracks_ref[x])
-            ih += `<option>${tracks_ref[x]}</option>`;
+            tracks_ar = [];
+            for (x in tracks_ref) {
+                tracks_ar.push(tracks_ref[x])
+                ih += `<option>${tracks_ref[x]}</option>`;
+            }
+
+            links_select.innerHTML = ih;
         }
+    }
 
-        links_select.innerHTML = ih;
+    function trackers_tab_show() {
+        var user = firebase.auth().currentUser;
+        if (!user) {
+            show_sign_in();
+        }else{
+            update_sel(user);
+        }
     }
 
 
@@ -235,12 +246,16 @@
 
             }
         } else {
-            var myModal = new bootstrap.Modal(document.getElementById('myModal'));
-            myModal.show();
-            document.getElementById("firebaseui-auth-container").style.display = 'block';
-            document.getElementsByClassName("firebaseui-id-secondary-link")[0].addEventListener('click', () => { myModal.hide() })
+            show_sign_in();
 
         }
+    }
+
+    function show_sign_in() {
+        var myModal = new bootstrap.Modal(document.getElementById('myModal'));
+        myModal.show();
+        document.getElementById("firebaseui-auth-container").style.display = 'block';
+        document.getElementsByClassName("firebaseui-id-secondary-link")[0].addEventListener('click', () => { myModal.hide() })
     }
 
     function copy_tracker() {
