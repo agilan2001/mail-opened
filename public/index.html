@@ -4,19 +4,21 @@
 <head>
     <meta name="viewport" content='width=device-width, initial-scale=1'>
 
-
+    <link type="text/css" rel="stylesheet" href="style.css" />
     <link type="text/css" rel="stylesheet" href="https://www.gstatic.com/firebasejs/ui/4.6.1/firebase-ui-auth.css" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW"
         crossorigin="anonymous"></script>
+
 </head>
 
 <body>
-
-    <h1>Mail OPENED</h1>
-
+    <div style="padding: 5px; background-color: paleturquoise; white-space: nowrap;">
+        <img src="res/envelope-1835757-1556316.png" style="width: 50px;">
+        <span class="h1" style="font-size: 35px; vertical-align: middle; font-weight: bold;">Mail OPENED ??</span>
+    </div>
 
 
     <div class="modal fade" id="myModal" tabindex="-1">
@@ -27,7 +29,7 @@
         </div>
     </div>
 
-    <ul class="nav nav-pills mb-3" id="pills-tab">
+    <ul style="background-color: greenyellow; font-weight: bold;position: sticky; top: 0; z-index: 1;" class="nav nav-pills mb-3" id="pills-tab">
         <li class="nav-item">
             <a class="nav-link active" id="pills-start-tab" data-bs-toggle="pill" href="#pills-start">Getting
                 Started</a>
@@ -39,50 +41,89 @@
     </ul>
     <div class="tab-content container" id="pills-tabContent">
         <div class="tab-pane fade show active" id="pills-start">
-            <h2 id="h2_t">Want to check whether your emails are being OPENED...</h2>
-            <h4>Simple, Free and Invisible Email-embedded trackers are here to aid you!!!</h4>
-            STEP 1 : Compose Your Email.<br>
-            STEP 2 : Generate the INVISIBLE MAIL TRACKER<br>
-            Name your Tracker : <input id="tracker_name_txt" type="text" placeholder="eg. Boss Email Tracker"><br>
-            <button onclick="create_inv_img()">GENERATE INVISIBLE TRACKER</button><br>
-            <div id="tracker_div">&nbsp;&nbsp;<img id="tracker_img">&nbsp;&nbsp;</div>&nbsp;
-            <button disabled="true" id="copy_tracker_btn" onclick="copy_tracker()">COPY INVISIBLE TRACKER</button><br>
-            STEP 3 : Paste the INVISIBLE MAIL TRACKER in the body of your Email<br>
-            STEP 4 : Send your Email. Goto My Trackers section and activate the INVISIBLE MAIL TRACKER<br>
+            <h2 id="h2_t">Want to check whether your Emails are being OPENED...</h2><hr>
+            <h5>Simple, Free and Invisible Email-embedded trackers are here to aid you!!!</h5>
+            <i>--- with Notifications support </i><hr>
 
-            That's it...<br>
-            Once you activate the tracker, your mail views are automatically logged.<br>
+            <div class="step_div">
+                <h6><span class="badge bg-danger">STEP 1</span> Compose Your Email.</h6>
+                <div class="step_cont">Start writing your Email in any of the Mail Apllications.</div>
+            </div>
+            <div class="step_div">
+                <h6><span class="badge bg-danger">STEP 2</span> Generate TRACKER</h6>
+                <div class="step_cont">Name your Tracker : <input id="tracker_name_txt" type="text"
+                        placeholder="eg. Boss Email Tracker"><br>
+                    <button class="btn btn-success" onclick="create_inv_img()" style="margin-top:10px"><span
+                            style="display: none;" id="create_inv_spinner" class="spinner-border spinner-border-sm">
+                        </span> GENERATE INVISIBLE TRACKER</button><br>
+                    <div id="tracker_div">&nbsp;&nbsp;<img id="tracker_img">&nbsp;&nbsp;</div>&nbsp;
+                </div>
+            </div>
+            <div class="step_div">
+                <h6><span class="badge bg-danger">STEP 3</span> Copy TRACKER</h6>
+                <div class="step_cont"><button class="btn btn-primary" disabled="true" id="copy_tracker_btn"
+                        onclick="copy_tracker()">COPY INVISIBLE TRACKER</button><span id="copy_tick_span"
+                        style="color: green; display:none;">✔</span> <br>
+                    Paste the INVISIBLE MAIL TRACKER into the body of your Email.<br>
+                    Note: The Tracker becomes INVISIBLE after Activation (next step)
+                </div>
+            </div>
 
+            <div class="step_div">
+                <h6><span class="badge bg-danger">STEP 4</span> Activate TRACKER</h6>
+                <div class="step_cont">Send your Email. Goto <a class="a"
+                        onclick="document.getElementById('pills-track-tab').click()" style="cursor: pointer;">My
+                        Trackers</a> section and activate the INVISIBLE MAIL TRACKER.<br>
+                    That's it...
+                    Once you activate the tracker, your mail views are automatically logged.<br>
+                </div>
+            </div>
+            <i>CAUTION: After activation, all views to the email are logged (including the sender's).</i>
+            <br><br><br><br>
         </div>
         <div class="tab-pane fade container" id="pills-track">
             <select onchange="links_select_change()" class="form-select" id="links_select">
                 <option selected disabled>--SELECT TRACKER--</option>
-            </select>
-            <button id="toggle_activate_btn" onclick="toggle_activate_lnk()">ACTIVATE TRACKER</button>
-            <table class="table table-hover">
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>Time</th>
-                    </tr>
-                </thead>
-                <tbody id="logs_table">
+            </select><br>
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-6">
+                        <button id="toggle_activate_btn" onclick="toggle_activate_lnk()">ACTIVATE TRACKER</button><br>
 
-                </tbody>
-            </table>
+                        How do you want us to notify you when your mail is opened ?<br>
+                        <div class="form-check">
+                            <input class="form-check-input" onchange="email_notif_check()" type="checkbox"
+                                id="email_check">
+                            <label class="form-check-label" for="email_check">
+                                Send an Email
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" onchange="browser_notif_check()" type="checkbox"
+                                id="notif_check">
+                            <label class="form-check-label" for="notif_check">
+                                Send Browser Notification
+                            </label>
+                        </div>
 
-            How do you want us to notify you when your mail is opened ?<br>
-            <div class="form-check">
-                <input class="form-check-input" onchange="email_notif_check()" type="checkbox" id="email_check">
-                <label class="form-check-label" for="email_check">
-                    Send an Email
-                </label>
-            </div>
-            <div class="form-check">
-                <input class="form-check-input" onchange="browser_notif_check()" type="checkbox" id="notif_check">
-                <label class="form-check-label" for="notif_check">
-                    Send Browser Notification
-                </label>
+                    </div>
+                    <div class="col-lg-6">
+                        <table id="logs_cont_table" class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th style="width: 65vw; max-width: 300px;">Time</th>
+                                </tr>
+                            </thead>
+                            <tbody id="logs_table">
+                                <tr>
+                                    <td></td>
+                                    <td>Nothing to show</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
 
         </div>
@@ -187,7 +228,7 @@
         var user = firebase.auth().currentUser;
         if (!user) {
             show_sign_in();
-        }else{
+        } else {
             update_sel(user);
         }
     }
@@ -205,46 +246,53 @@
     }
 
     async function create_inv_img() {
+        create_inv_spinner.style.display = "inline-block";
+        copy_tick_span.style.display = "none";
         if (firebase.auth().currentUser) {
             var track_name = tracker_name_txt.value;
-            if (track_name) {
-                var uid = firebase.auth().currentUser.uid;
+            if (!track_name) {
+                track_name = "TRACKER: " + new Date().toLocaleDateString("en-IN");
+                tracker_name_txt.value = track_name;
+            }
+            var uid = firebase.auth().currentUser.uid;
 
-                var cur_cnt;
-                await firebase.database().ref('users/' + uid + "/info/cnt").transaction((cnt) => { cur_cnt = cnt; return cnt + 1; });
-
-
-                new_link_key = "l" + (cur_cnt + 1);
-
-                var link_ref = firebase.database().ref('users/' + uid + "/links");
-                link_ref.update({
-                    [new_link_key + "/conf/track"]: track_name,
-                    [new_link_key + "/conf/active"]: false,
-                    [new_link_key + "/conf/s_ma"]: false,
-                    [new_link_key + "/conf/s_no"]: false,
-                });
-
-                tracker_img = document.getElementById("tracker_img");
-
-                tracker_img.onload = () => {
-                    copy_tracker_btn.disabled = false;
-
-                }
-                tracker_img.src = `https://xpl6mndw31.execute-api.us-east-2.amazonaws.com/default/gmail-read-receipt/?key=${new_link_key}&uid=${uid}`
+            var cur_cnt;
+            await firebase.database().ref('users/' + uid + "/info/cnt").transaction((cnt) => { cur_cnt = cnt; return cnt + 1; });
 
 
-                firebase.database().ref('users/' + uid + "/info/tracks").push(track_name);
+            new_link_key = "l" + (cur_cnt + 1);
 
-                // navigator.clipboard.write([
-                //     new ClipboardItem({
-                //         ['text/html']: new Blob([`<img src="https://xpl6mndw31.execute-api.us-east-2.amazonaws.com/default/gmail-read-receipt/?key=${new_link_key}&uid=${uid}">`], { type: 'text/html' })
-                //     })
-                // ])
+            var link_ref = firebase.database().ref('users/' + uid + "/links");
+            link_ref.update({
+                [new_link_key + "/conf/track"]: track_name,
+                [new_link_key + "/conf/active"]: false,
+                [new_link_key + "/conf/s_ma"]: false,
+                [new_link_key + "/conf/s_no"]: false,
+                [new_link_key + "/conf/doc"]: Date.now(),
+            });
 
+            tracker_img = document.getElementById("tracker_img");
 
-
+            tracker_img.onload = () => {
+                copy_tracker_btn.disabled = false;
+                create_inv_spinner.style.display = "none";
 
             }
+            tracker_img.src = `https://xpl6mndw31.execute-api.us-east-2.amazonaws.com/default/gmail-read-receipt/?key=${new_link_key}&uid=${uid}`
+
+
+            firebase.database().ref('users/' + uid + "/info/tracks").push(track_name);
+
+            // navigator.clipboard.write([
+            //     new ClipboardItem({
+            //         ['text/html']: new Blob([`<img src="https://xpl6mndw31.execute-api.us-east-2.amazonaws.com/default/gmail-read-receipt/?key=${new_link_key}&uid=${uid}">`], { type: 'text/html' })
+            //     })
+            // ])
+
+
+
+
+
         } else {
             show_sign_in();
 
@@ -267,6 +315,7 @@
         range.selectNode(document.getElementById("tracker_div"))
         selection.addRange(range);
         var j = document.execCommand("copy")
+        copy_tick_span.style.display = "inline";
 
         //selection.removeAllRanges();
 
@@ -289,16 +338,18 @@
     async function links_select_change() {
         if (prev_sel_val)
             firebase.database().ref("users/" + firebase.auth().currentUser.uid + "/links/" + "l" + (tracks_ar.indexOf(prev_sel_val) + 1) + "/logs").off("value");
-        firebase.database().ref("users/" + firebase.auth().currentUser.uid + "/links/" + "l" + (tracks_ar.indexOf(prev_sel_val) + 1) + "/logs").on("value", (snap) => {
+        firebase.database().ref("users/" + firebase.auth().currentUser.uid + "/links/" + "l" + (tracks_ar.indexOf(links_select.value) + 1) + "/logs").on("value", (snap) => {
+
             var v = snap.val();
+
             var ih = "";
             var cnt = 1;
             for (x in v) {
-                ih += `<tr><td>${cnt}</td><td>${new Date(v[x]['dt']).toLocaleString('en-IN')}</td></tr>`;
+                ih = `<tr><td>${cnt}</td><td>${new Date(v[x]['dt']).toLocaleString('en-IN')}</td></tr>` + ih;
                 cnt++;
             }
 
-            logs_table.innerHTML = ih;
+            logs_table.innerHTML = ih || `<tr><td></td><td>Nothing to show</td></tr>`;
         })
 
         var conf = (await firebase.database().ref(`users/${firebase.auth().currentUser.uid}/links/${"l" + (tracks_ar.indexOf(links_select.value) + 1)}/conf`).once("value")).val();
