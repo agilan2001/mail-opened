@@ -47,7 +47,7 @@ exports.handler = async (event) => {
                 dt: Date.now()
             }),
 
-            new Promise((conf.s_no) ?
+            ((conf.s_no) ?
                 admin.messaging().sendToDevice((await db.ref(`users/${uid}/info/fcm`).once("value")).val(),
                     {
                         "data": {
@@ -59,7 +59,7 @@ exports.handler = async (event) => {
 
 
 
-            new Promise((conf.s_ma) ?
+            ((conf.s_ma) ?
                 transporter.sendMail({
                     from: 'agilanvlr2001@gmail.com',
                     to: (await db.ref(`users/${uid}/info/mail`).once("value")).val(),
