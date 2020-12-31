@@ -40,40 +40,40 @@ exports.handler = async (event) => {
     var { key, uid } = event.queryStringParameters;
     //var { sourceIp, userAgent } = event.requestContext.identity;
     var conf = (await db.ref(`users/${uid}/links/${key}/conf`).once("value")).val();
-    
-    if (conf.active) {
-        await db.ref(`users/${uid}/links/${key}/logs`).push({
-            dt: Date.now()
-        })
-        
-        if (conf.s_no) {
-            await admin.messaging().sendToDevice((await db.ref(`users/${uid}/info/fcm`).once("value")).val(),
-                {
-                    "data": {
-                        "notification": JSON.stringify({
-                            "body": conf.track,
-                        })
-                    }
-                })
-        }
 
-        
-        if (conf.s_ma) {
-            var mailOptions = {
-                from: 'agilanvlr2001@gmail.com',
-                to: (await db.ref(`users/${uid}/info/mail`).once("value")).val(),
-                subject: 'Mail-OPENED ALERT',
-                html: `<center><h1 style = "color:blue">Mail-OPENED ALERT</h1>
+    if (conf.active) {
+        await Promise.all([
+            db.ref(`users/${uid}/links/${key}/logs`).push({
+                dt: Date.now()
+            }),
+
+            new Promise((conf.s_no) ?
+                admin.messaging().sendToDevice((await db.ref(`users/${uid}/info/fcm`).once("value")).val(),
+                    {
+                        "data": {
+                            "notification": JSON.stringify({
+                                "body": conf.track,
+                            })
+                        }
+                    }) : 0),
+
+
+
+            new Promise((conf.s_ma) ?
+                transporter.sendMail({
+                    from: 'agilanvlr2001@gmail.com',
+                    to: (await db.ref(`users/${uid}/info/mail`).once("value")).val(),
+                    subject: 'Mail-OPENED ALERT',
+                    html: `<center><h1 style = "color:blue">Mail-OPENED ALERT</h1>
           <img style="height:100px" src= "https://dl.dropbox.com/s/0ap2te49gnthv16/bell.png">
           <h3 style="text-decoration:underline">ALERT</h3>
           <h2 style="font-style:italic">${conf.track} : Your Mail is being opened</h2>
           <h3><a href = "https://mail-opened.web.app/">https://mail-opened.web.app/</a></h3>
           </center>`
-            };
+                }) : 0)
 
-            await transporter.sendMail(mailOptions);
 
-        }
+        ]);
     }
     const response = {
         headers: {
@@ -85,7 +85,7 @@ exports.handler = async (event) => {
 
         },
         statusCode: 200,
-        body: conf.active?'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=':'iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAFUlEQVR42mP8z8AARIQB46hC+ioEAGX8E/cKr6qsAAAAAElFTkSuQmCC',
+        body: conf.active ? 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=' : 'iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAFUlEQVR42mP8z8AARIQB46hC+ioEAGX8E/cKr6qsAAAAAElFTkSuQmCC',
         isBase64Encoded: true
     };
     return response;
