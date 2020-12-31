@@ -47,9 +47,10 @@
     </div>
     <div class="tab-content container" id="pills-tabContent">
         <div class="tab-pane fade show active" id="pills-start">
-            <h2 style="color:darkred" >Want to check whether your Emails are being OPENED...</h2>
+            <h2 style="color:darkred">Want to check whether your Emails are being OPENED...</h2>
             <hr>
-            <h5 style="color: red;font-weight: bold;">Simple, Free and <span class="inv_span">INVISIBLE</span> Email-embedded trackers are here to aid you!!!</h5>
+            <h5 style="color: red;font-weight: bold;">Simple, Free and <span class="inv_span">INVISIBLE</span>
+                Email-embedded trackers are here to aid you!!!</h5>
             <i>--- with Notifications support </i>
             <hr>
 
@@ -242,14 +243,16 @@
     async function update_sel(user) {
         if (user) {
             var tracks_ref = (await firebase.database().ref('users/' + user.uid + '/info/tracks').once("value")).val();
-            var ih = `<option selected disabled>--SELECT TRACKER--</option>`;
+            var ih = "";
 
 
             tracks_ar = [];
             for (x in tracks_ref) {
                 tracks_ar.push(tracks_ref[x])
-                ih += `<option>${tracks_ref[x]}</option>`;
+                ih = `<option>${tracks_ref[x]}</option>` + ih;
             }
+
+            ih = `<option selected disabled>--SELECT TRACKER--</option>` + ih;
 
             links_select.innerHTML = ih;
         }
