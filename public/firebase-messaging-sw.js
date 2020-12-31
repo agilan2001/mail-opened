@@ -19,7 +19,7 @@ messaging.setBackgroundMessageHandler(function (payload) {
     const notificationTitle = "Mail-Opened ALERT 📩";
     const notificationOptions = {
         body: notification.body + ": Your Mail is being viewed...",
-        icon: "https://dl.dropbox.com/s/lajvp5srja4h4ny/bell-small.png",
+        icon: "https://mail-opened.web.app/res/icon.png",
         actions: [
             { action: 'b', title: '👍DONE' },
             { action: 'a', title: 'Mail-Opened' }

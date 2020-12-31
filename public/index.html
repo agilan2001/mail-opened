@@ -16,7 +16,7 @@
 
 <body>
     <div style="padding: 5px; background-color: paleturquoise; white-space: nowrap;">
-        <img src="res/envelope-1835757-1556316.png" style="width: 50px;">
+        <img src="res/icon.png" style="width: 50px;">
         <span class="h1" style="font-size: 35px; vertical-align: middle; font-weight: bold;">Mail OPENED ??</span>
     </div>
 
@@ -29,21 +29,29 @@
         </div>
     </div>
 
-    <ul style="background-color: greenyellow; font-weight: bold;position: sticky; top: 0; z-index: 1;" class="nav nav-pills mb-3" id="pills-tab">
-        <li class="nav-item">
-            <a class="nav-link active" id="pills-start-tab" data-bs-toggle="pill" href="#pills-start">Getting
-                Started</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" id="pills-track-tab" data-bs-toggle="pill" href="#pills-track"
-                onclick="trackers_tab_show()">My Trackers</a>
-        </li>
-    </ul>
+    <div style="position: sticky; top: 0; z-index: 1;">
+        <ul style="background-color: greenyellow; font-weight: bold;" class="nav nav-pills" id="pills-tab">
+            <li class="nav-item">
+                <a class="nav-link active" id="pills-start-tab" data-bs-toggle="pill" href="#pills-start">Getting
+                    Started</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="pills-track-tab" data-bs-toggle="pill" href="#pills-track"
+                    onclick="trackers_tab_show()">My Trackers</a>
+            </li>
+        </ul>
+        <div style="background-color: paleturquoise;padding: 10px; margin-bottom: 10px;">
+            <a class="a" id="log_span" style="float: right; margin-right: 10px;" onclick="log_span_click()">Login</a>
+            <span id="user_name_span">&nbsp;</span>
+        </div>
+    </div>
     <div class="tab-content container" id="pills-tabContent">
         <div class="tab-pane fade show active" id="pills-start">
-            <h2 id="h2_t">Want to check whether your Emails are being OPENED...</h2><hr>
-            <h5>Simple, Free and Invisible Email-embedded trackers are here to aid you!!!</h5>
-            <i>--- with Notifications support </i><hr>
+            <h2 style="color:darkred" >Want to check whether your Emails are being OPENED...</h2>
+            <hr>
+            <h5 style="color: red;font-weight: bold;">Simple, Free and <span class="inv_span">INVISIBLE</span> Email-embedded trackers are here to aid you!!!</h5>
+            <i>--- with Notifications support </i>
+            <hr>
 
             <div class="step_div">
                 <h6><span class="badge bg-danger">STEP 1</span> Compose Your Email.</h6>
@@ -52,7 +60,7 @@
             <div class="step_div">
                 <h6><span class="badge bg-danger">STEP 2</span> Generate TRACKER</h6>
                 <div class="step_cont">Name your Tracker : <input id="tracker_name_txt" type="text"
-                        placeholder="eg. Boss Email Tracker"><br>
+                        placeholder="e.g. Boss Email Tracker"><br>
                     <button class="btn btn-success" onclick="create_inv_img()" style="margin-top:10px"><span
                             style="display: none;" id="create_inv_spinner" class="spinner-border spinner-border-sm">
                         </span> GENERATE INVISIBLE TRACKER</button><br>
@@ -75,7 +83,7 @@
                         onclick="document.getElementById('pills-track-tab').click()" style="cursor: pointer;">My
                         Trackers</a> section and activate the INVISIBLE MAIL TRACKER.<br>
                     That's it...
-                    Once you activate the tracker, your mail views are automatically logged.<br>
+                    Once you activate the TRACKER, your mail views are automatically logged.<br>
                 </div>
             </div>
             <i>CAUTION: After activation, all views to the email are logged (including the sender's).</i>
@@ -84,28 +92,32 @@
         <div class="tab-pane fade container" id="pills-track">
             <select onchange="links_select_change()" class="form-select" id="links_select">
                 <option selected disabled>--SELECT TRACKER--</option>
-            </select><br>
+            </select>
             <div class="container">
                 <div class="row">
                     <div class="col-lg-6">
-                        <button id="toggle_activate_btn" onclick="toggle_activate_lnk()">ACTIVATE TRACKER</button><br>
 
-                        How do you want us to notify you when your mail is opened ?<br>
-                        <div class="form-check">
-                            <input class="form-check-input" onchange="email_notif_check()" type="checkbox"
-                                id="email_check">
-                            <label class="form-check-label" for="email_check">
-                                Send an Email
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" onchange="browser_notif_check()" type="checkbox"
-                                id="notif_check">
-                            <label class="form-check-label" for="notif_check">
-                                Send Browser Notification
-                            </label>
+                        <div class="notif_options_div">
+                            How do you want us to notify you when your mail is opened ?<br>
+                            <div class="form-check">
+                                <input class="form-check-input" onchange="email_notif_check()" type="checkbox"
+                                    id="email_check">
+                                <label class="form-check-label" for="email_check">
+                                    Send an Email
+                                </label>
+                            </div>
+
+                            <div class="form-check">
+                                <input class="form-check-input" onchange="browser_notif_check()" type="checkbox"
+                                    id="notif_check">
+                                <label class="form-check-label" for="notif_check">
+                                    Send Browser Notification
+                                </label>
+                            </div>
                         </div>
 
+                        <button class="btn btn-success" id="toggle_activate_btn" style="display: block;margin: auto;"
+                            onclick="toggle_activate_lnk()">ACTIVATE TRACKER</button><br>
                     </div>
                     <div class="col-lg-6">
                         <table id="logs_cont_table" class="table table-hover">
@@ -206,7 +218,26 @@
 
     })
 
-    firebase.auth().onAuthStateChanged(update_sel);
+    firebase.auth().onAuthStateChanged((user) => {
+        if (user) {
+            update_sel(user);
+            user_name_span.innerHTML = "Signed in as <i><b>" + user.email.split("@")[0] + "</b></i>";
+            log_span.innerHTML = "Logout"
+        } else {
+            user_name_span.innerHTML = "&nbsp;";
+            log_span.innerHTML = "Login"
+        }
+    });
+
+    function log_span_click() {
+        if (firebase.auth().currentUser) {
+            firebase.auth().signOut();
+            user_name_span.innerHTML = "&nbsp;";
+            log_span.innerHTML = "Login"
+        } else {
+            show_sign_in();
+        }
+    }
 
     async function update_sel(user) {
         if (user) {
@@ -328,8 +359,12 @@
         await firebase.database().ref(`users/${firebase.auth().currentUser.uid}/links/${"l" + (tracks_ar.indexOf(links_select.value) + 1)}/conf/active`).transaction(val => { cur = !val; return cur; });
         if (!cur) {
             toggle_activate_btn.innerHTML = "ACTIVATE TRACKER";
+            toggle_activate_btn.classList.remove("btn-danger");
+            toggle_activate_btn.classList.add("btn-success");
         } else {
             toggle_activate_btn.innerHTML = "DEACTIVATE TRACKER";
+            toggle_activate_btn.classList.remove("btn-success");
+            toggle_activate_btn.classList.add("btn-danger");
         }
     }
 
@@ -357,8 +392,12 @@
         var isActive = conf.active;
         if (!isActive) {
             toggle_activate_btn.innerHTML = "ACTIVATE TRACKER";
+            toggle_activate_btn.classList.remove("btn-danger");
+            toggle_activate_btn.classList.add("btn-success");
         } else {
             toggle_activate_btn.innerHTML = "DEACTIVATE TRACKER";
+            toggle_activate_btn.classList.remove("btn-success");
+            toggle_activate_btn.classList.add("btn-danger");
         }
 
         email_check.checked = conf.s_ma;
@@ -391,9 +430,8 @@
         var notif_info = JSON.parse(payload.data.notification);
         var title = "Mail-Opened ⏰";
         var options = {
-            icon: "",
             body: notif_info.body + ": Your Mail is being viewed...",
-            icon: "https://dl.dropbox.com/s/lajvp5srja4h4ny/bell-small.png",
+            icon: "https://mail-opened.web.app/res/icon.png",
             actions: [
                 { action: 'b', title: '👍DONE' },
                 { action: 'a', title: 'Mail-Opened' }

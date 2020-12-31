@@ -1,12 +1,13 @@
 #logs_cont_table {
     display: block;
-    max-height: 300px;
+    max-height: 35vh;
     width: fit-content;
     overflow: auto;
     border-collapse: separate;
-    margin: auto;
+    margin: 20px auto;
     border: 3px solid red;
     border-radius: 5px;
+    
 }
 
 #logs_cont_table th {
@@ -28,4 +29,32 @@
     margin:20px 0;
     border-bottom: 2px solid blue;
     padding-bottom: 10px;
+}
+
+.notif_options_div{
+    
+    border: 2px solid blue;
+    padding: 8px;
+    border-radius: 10px;
+    margin: 10px auto;
+    max-width: 400px;
+}
+
+.inv_span{
+    animation: inv_span_anim 2s infinite alternate;
+}
+
+@keyframes inv_span_anim{
+    0%{
+        color:red;
+    }
+    40%{
+        color:red;
+    }
+    60%{
+        color:white;
+    }
+    100%{
+        color:white;
+    }
 }
