@@ -1,3 +1,6 @@
+body{
+    background: linear-gradient(90deg, rgba(135,205,235,0.7), rgb(135,205,235), rgba(135,205,235,0.7));
+}
 #logs_cont_table {
     display: block;
     max-height: 35vh;
@@ -13,7 +16,7 @@
 #logs_cont_table th {
     position: sticky;
     top: 0;
-    background-color: white;
+    background-color: cornflowerblue;
 }
 
 #links_select {
@@ -52,9 +55,9 @@
         color:red;
     }
     60%{
-        color:white;
+        color:transparent;
     }
     100%{
-        color:white;
+        color:transparent;
     }
 }
