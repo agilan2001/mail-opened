@@ -65,7 +65,7 @@ exports.handler = async (event) => {
                     to: (await db.ref(`users/${uid}/info/mail`).once("value")).val(),
                     subject: 'Mail-OPENED ALERT',
                     html: `<center><h1 style = "color:blue">Mail-OPENED ALERT</h1>
-          <img style="height:100px" src= "https://dl.dropbox.com/s/0ap2te49gnthv16/bell.png">
+          <img style="height:100px" src= "https://mail-opened.web.app/res/icon.png">
           <h3 style="text-decoration:underline">ALERT</h3>
           <h2 style="font-style:italic">${conf.track} : Your Mail is being opened</h2>
           <h3><a href = "https://mail-opened.web.app/">https://mail-opened.web.app/</a></h3>
