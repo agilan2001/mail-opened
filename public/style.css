@@ -1,6 +1,7 @@
-body{
-    background: linear-gradient(90deg, rgba(135,205,235,0.7), rgb(135,205,235), rgba(135,205,235,0.7));
+body {
+    background: linear-gradient(90deg, rgba(135, 205, 235, 0.5), rgb(135, 205, 235), rgba(135, 205, 235, 0.5));
 }
+
 #logs_cont_table {
     display: block;
     max-height: 35vh;
@@ -10,7 +11,6 @@ body{
     margin: 20px auto;
     border: 3px solid red;
     border-radius: 5px;
-    
 }
 
 #logs_cont_table th {
@@ -21,21 +21,20 @@ body{
 
 #links_select {
     max-width: 400px;
-    margin:auto;
+    margin: auto;
 }
 
-.step_cont{
-    margin-left: 20px ;
+.step_cont {
+    margin-left: 20px;
 }
 
-.step_div{
-    margin:20px 0;
+.step_div {
+    margin: 20px 0;
     border-bottom: 2px solid blue;
     padding-bottom: 10px;
 }
 
-.notif_options_div{
-    
+.notif_options_div {
     border: 2px solid blue;
     padding: 8px;
     border-radius: 10px;
@@ -43,21 +42,28 @@ body{
     max-width: 400px;
 }
 
-.inv_span{
+.inv_span {
     animation: inv_span_anim 2s infinite alternate;
 }
 
-@keyframes inv_span_anim{
-    0%{
-        color:red;
+@keyframes inv_span_anim {
+    0% {
+        color: red;
     }
-    40%{
-        color:red;
+    40% {
+        color: red;
     }
-    60%{
-        color:transparent;
+    60% {
+        color: transparent;
     }
-    100%{
-        color:transparent;
+    100% {
+        color: transparent;
     }
+}
+
+video {
+    margin: auto;
+    display: block;
+    border: 4px solid red;
+    border-radius: 10px;
 }
