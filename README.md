@@ -10,11 +10,11 @@
 </p>
 
 ### Technologies:
+* AWS Lambda functions
 * Firebase Authentication
 * Firebase Cloud Messaging
 * Firebase RealTime Database
 * Firebase Hosting
-* AWS Lambda functions
 * Bootstrap CSS
 
 ### KEY Concept:
