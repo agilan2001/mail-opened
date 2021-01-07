@@ -67,3 +67,10 @@ video {
     border: 4px solid red;
     border-radius: 10px;
 }
+
+/*Firebase ui dialog correction*/
+dialog.mdl-dialog.firebaseui-dialog.firebaseui-id-dialog {
+    top: unset !important;
+    left: 0 !important;
+    right: 0 !important;
+}
