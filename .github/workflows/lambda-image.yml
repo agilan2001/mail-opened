@@ -31,12 +31,21 @@ jobs:
       #   uses: montudor/action-zip@v0.1.0
       #   with:
       #     args: zip -qq -r ./bundle.zip ./
-      - name: default deploy
-        uses: appleboy/lambda-action@master
-        with:
-          aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws_region: us-east-2
-          function_name: gmail-read-receipt
-          zip_file: ./lambda/image/bundle.zip
-          timeout: 10
+
+      - name: Deploy lambda
+        run: |
+          aws lambda update-function-code --function-name "gmail-read-recipt" --zip-file "fileb://lambda/image/bundle.zip" 
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: ap-south-1
+
+      # - name: default deploy
+      #   uses: appleboy/lambda-action@master
+      #   with:
+      #     aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      #     aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      #     aws_region: us-east-2
+      #     function_name: gmail-read-receipt
+      #     zip_file: ./lambda/image/bundle.zip
+      #     timeout: 10

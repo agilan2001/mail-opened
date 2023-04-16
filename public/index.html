@@ -312,7 +312,7 @@
 
 
     function createNewUser(uid, mail) {
-        fetch("https://iflyrlquq5.execute-api.us-east-2.amazonaws.com/default/mail-opened-query", {
+        fetch("https://050vp46p3k.execute-api.ap-south-1.amazonaws.com/default/mail-opened-query", {
             method: 'POST',
             body: JSON.stringify({
                 query: 'create',
@@ -355,7 +355,7 @@
                 create_inv_spinner.style.display = "none";
 
             }
-            tracker_img.src = `https://xpl6mndw31.execute-api.us-east-2.amazonaws.com/default/gmail-read-receipt/?key=${new_link_key}&uid=${uid}`
+            tracker_img.src = `https://qy2uo6ti9i.execute-api.ap-south-1.amazonaws.com/default/gmail-read-recipt/?key=${new_link_key}&uid=${uid}`
 
 
             firebase.database().ref('users/' + uid + "/info/tracks").push(track_name);
